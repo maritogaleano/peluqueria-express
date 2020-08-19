@@ -1,0 +1,193 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    {% block title %}
+
+
+    {% endblock %}
+
+    <link rel="shortcut icon" href="{% static 'images/icon/favicon.png' %}"/>
+    <link href="{% static 'css/font-face.css' %}" rel="stylesheet" media="all">
+    <link rel="stylesheet" href="{% static 'vendor/fullcalendar/main.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/fullcalendar-daygrid/main.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/fullcalendar-timegrid/main.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/fullcalendar-bootstrap/main.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/fontawesome-free/css/all.min.css' %}">
+    <link href="{% static 'vendor/mdi-font/css/material-design-iconic-font.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/bootstrap-4.1/bootstrap.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/animsition/animsition.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/bootstrap-progressbar/bootstrap-progressbar-3.3.4.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/wow/animate.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/css-hamburgers/hamburgers.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/perfect-scrollbar/perfect-scrollbar.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.min.css' %}" rel="stylesheet" media="all">
+    <link rel="stylesheet" href="{% static 'vendor/datatables-1.10.20/css/dataTables.bootstrap4.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'vendor/datatables-1.10.20/plugins/responsive-2.2.3/css/responsive.bootstrap4.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/lualmada.css' %}"/>
+    <script src="{% static 'vendor/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'vendor/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+  <link href="{% static 'vendor/select2-bootstrap4-theme/select2-bootstrap4.min.css' %}" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+  <link rel="stylesheet" href="{% static 'vendor/jquery-confirm-v3.3.4/jquery-confirm.min.css' %}"/>
+
+
+
+  
+   
+
+   
+
+  
+
+   
+
+    <!-- Main CSS-->
+    <link href="{% static 'css/theme.css' %}" rel="stylesheet" media="all">
+
+</head>
+
+<body class="animsition">
+    <div class="page-wrapper">
+        <!-- HEADER MOBILE-->
+        <header class="header-mobile d-block d-lg-none">
+            <div class="header-mobile__bar">
+                <div class="container-fluid">
+                    <div class="header-mobile-inner">
+                        <a class="logo" href="#">
+                            <img src="{% static 'images/icon/cabecera.png' %}" />
+                        </a>
+                        <button class="hamburger hamburger--slider" type="button">
+                            <span class="hamburger-box">
+                                <span class="hamburger-inner"></span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% include "nav.html" %}
+        </header>
+        <!-- END HEADER MOBILE-->
+
+        <!-- MENU SIDEBAR-->
+            {% include "sidebar.html" %}
+        <!-- END MENU SIDEBAR-->
+
+        <!-- PAGE CONTAINER-->
+        <div class="page-container">
+            <!-- HEADER DESKTOP-->
+            <header class="header-desktop">
+                <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                        <div class="header-wrap">
+                            <form class="hidden">
+                            
+                            </form>
+                            <div class="header-button">
+                                <div class="noti-wrap">
+
+                                </div>
+                                <div class="account-wrap">
+                                    <div class="account-item clearfix js-item-menu">
+
+                                        <div class="content">
+                                          <i class="fas fa-user"></i> <a class="js-acc-btn">{{ user.first_name }}</a>
+                                        </div>
+                                        <div class="account-dropdown js-dropdown">
+                                            <div class="info clearfix">
+                                                <div class="content">
+                                                    <h5 class="name">
+                                                        <p> {{ user.first_name }} </p>
+                                                    </h5>
+                                                    <span class="email">{{ user.email }}</span>
+                                                </div>
+                                            </div>
+    
+                                            <div class="account-dropdown__footer">
+                                                <a href="{% url 'logout' %}">
+                                                    <i class="zmdi zmdi-power"></i>Cerrar Sesión</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- HEADER DESKTOP-->
+
+            <!-- MAIN CONTENT-->
+            <div class="main-content">
+                <div class="section__content section__content--p30">
+                    <div class="container-fluid">
+                       
+                        
+                        {% block container %}
+
+
+                        {% endblock %}
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            <!-- END MAIN CONTENT-->
+            <!-- END PAGE CONTAINER-->
+        </div>
+
+    </div>
+    <!-- Jquery JS-->
+   
+    
+    <script src="{% static 'vendor/wow/wow.min.js' %}"></script>
+    <script src="{% static 'vendor/animsition/animsition.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap-progressbar/bootstrap-progressbar.min.js' %}"></script>
+    <script src="{% static 'vendor/counter-up/jquery.waypoints.min.js' %}"></script>
+    <script src="{% static 'vendor/counter-up/jquery.counterup.min.js' %}"></script>
+    <script src="{% static 'vendor/circle-progress/circle-progress.min.js' %}"></script>
+    <script src="{% static 'vendor/perfect-scrollbar/perfect-scrollbar.js' %}"></script>
+    <script src="{% static 'vendor/moment-2.25.3/moment-with-locales.js' %}"></script>
+    <script src="{% static 'vendor/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.min.js' %}"></script>
+    <script src="{% static 'js/sweetalert2.all.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables-1.10.20/js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'vendor/datatables-1.10.20/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables-1.10.20/plugins/responsive-2.2.3/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables-1.10.20/plugins/responsive-2.2.3/js/responsive.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'vendor/fullcalendar/main.min.js' %}"></script>
+    <script src="{% static 'vendor/fullcalendar-daygrid/main.min.js' %}"></script>
+    <script src="{% static 'vendor/fullcalendar-timegrid/main.min.js' %}"></script>
+    <script src="{% static 'vendor/fullcalendar-interaction/main.min.js' %}"></script>
+    <script src="{% static 'vendor/fullcalendar-bootstrap/main.min.js' %}"></script>
+    <script src="{% static 'vendor/fullcalendar/locales/es.js' %}"></script>
+    <script src="{% static 'vendor/jquery-confirm-v3.3.4/jquery-confirm.min.js' %}"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    
+    
+    
+
+
+    
+
+    <!-- Main JS-->
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/functions.js' %}"></script>
+        {% block scripts %}
+
+
+        {% endblock %}
+        {% load sweetify %}
+        
+        {% sweetify %}
+</body>
+
+</html>
+

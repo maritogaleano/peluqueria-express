@@ -1,0 +1,99 @@
+<nav class="navbar-mobile">
+    <div class="container-fluid">
+        <ul class="navbar-mobile__list list-unstyled">
+            <li class="has-sub">
+                <a class="js-arrow" href="#">
+                    <i class="fa fa-home"></i>Inicio</a>
+                <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
+            
+                </ul>
+            </li>
+    
+            <li class="has-sub">
+                    <a class="js-arrow" href="#">
+                        <i class="fas fa-user-tie"></i>Clientes
+                        <span class="arrow">
+                            <i class="fas fa-angle-down"></i>
+                        </span>
+                    </a>
+                    <ul class="list-unstyled navbar__sub-list js-sub-list">
+
+                        <li>
+                            <a href="{% url 'clientes:nuevo_cliente' %}">
+                           <i class="far fa-circle"></i>Ficha</a>
+                       </li>
+
+                        <li>
+                             <a href="{% url 'clientes:listado_clientes' %}">
+                            <i class="far fa-circle"></i>Listado</a>
+                        </li>
+                     
+                    </ul>
+                </li>
+               
+                <li class="has-sub">
+                    <a class="js-arrow" href="#">
+                        <i class="fas fa-users-cog"></i>Profesionales
+                        <span class="arrow">
+                            <i class="fas fa-angle-down"></i>
+                        </span>
+                    </a>
+                    <ul class="list-unstyled navbar__sub-list js-sub-list">
+                        <li>
+                             <a href="{% url 'profesionales:listado_empleados' %}">
+                            <i class="far fa-circle"></i>Listado</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'profesionales:nuevo_empleado' %}">
+                           <i class="far fa-circle"></i>Ficha de Profesional</a>
+                       </li>
+                     
+                    </ul>
+                </li>
+
+                <li class="has-sub">
+                    <a class="js-arrow" href="#">
+                        <i class="fas fa-thumbtack"></i>Servicios
+                        <span class="arrow">
+                            <i class="fas fa-angle-down"></i>
+                        </span>
+                    </a>
+                    <ul class="list-unstyled navbar__sub-list js-sub-list">
+                        <li>
+                            <a href="{% url 'servicios:nuevo_servicio' %}">
+                           <i class="far fa-circle"></i>Nuevo</a>
+                       </li>
+
+                        <li>
+                             <a href="{% url 'servicios:listado_servicios' %}">
+                            <i class="far fa-circle"></i>Listado</a>
+                        </li>
+                     
+                    </ul>
+                </li>
+
+                <li class="has-sub">
+                    <a class="js-arrow" href="#">
+                        <i class="fas fa-spa"></i>Trabajos
+                        <span class="arrow">
+                            <i class="fas fa-angle-down"></i>
+                        </span>
+                    </a>
+                    <ul class="list-unstyled navbar__sub-list js-sub-list">
+                        <li>
+                             <a href="">
+                            <i class="far fa-circle"></i>Nuevo Servicio</a>
+                        </li>
+
+                        <li>
+                            <a href="">
+                           <i class="far fa-circle"></i>Listado</a>
+                       </li>
+                     
+                    </ul>
+                </li>
+            
+        </ul>
+    </div>
+</nav>

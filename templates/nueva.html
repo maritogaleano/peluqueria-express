@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block container %} 
+
+        {% block title %}
+
+            <title> Luomo App | Deposito en efectivo </title>
+
+        {% endblock %}
+
+        <div class="card">
+            <div class="card-header"> <i class="fas fa-home"></i> Home /  Depositos bancarios / Depositos en efectivo </div>
+            <div class="card-body">
+                <div class="card-title">
+                    <h3 class="text-center title-2"><i class="fas fa-hand-holding-usd fa-2x" style="color:#17a2b8"></i> Ingresar deposito </h3>
+                </div>
+
+                <form id="Deposito"  method="post">
+
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label class="control-label mb-1">Dia de Venta</label>
+                        <div class="input-group date" data-target-input="nearest">
+                            <input name="U_U_DIAVENTA" id="saleDate" type="text" class="form-control datetimepicker-input" data-toggle="datetimepicker"  data-target="#saleDate" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label mb-1">Monto</label>
+                        <input name="TotalLC" id="TotalLC" type="number" min="1" class="form-control" autocomplete="off" placeholder="Ingresar monto sin puntos" ">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label mb-1"> Boleta de deposito Nro.</label>
+                        <input  name="BankReference" id="BankReference" type="text" class="form-control" value="" data-val="true" autocomplete="off">
+                    </div>
+
+                     <div class="form-group">
+                        <label class="control-label mb-1">Cargado por: </label>
+                        <input name="U_Responsable" id="U_Responsable" type="text" class="form-control" autocomplete="off" placeholder="Nombre y Apellido">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label mb-1">Comentarios</label>
+                        <input name="JournalRemarks" id="JournalRemarks" type="text" class="form-control" autocomplete="off" placeholder="Ej: Venta / Local/ Dia de Venta">
+                    </div>
+
+                    <div>
+                        <button type="submit" class="btn btn-lg btn-info btn-block" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Aguarde un momento...">
+                            <i class="fas fa-save"></i>
+                            <span>Guardar deposito</span>
+                        </button>
+                    </div>
+                </form>
+        </div>
+
+{% endblock %}
+
+{% block scripts %}  
+
+    <script type="text/javascript">
+        $(function () {
+            $('#saleDate').datetimepicker({
+                format: 'YYYY-MM-DD',  
+                date: moment().format("YYYY-MM-DD"),
+                locale: 'es'
+
+            });
+
+            $('.btn').on('click', function() {
+                var $this = $(this);
+                var loadingText = '<i class="fa fa-spinner fa-pulse fa-fw"></i> Aguarde un momento...';
+                if ($(this).html() !== loadingText) {
+                $this.data('original-text', $(this).html());
+                $this.html(loadingText);
+                }
+                setTimeout(function() {
+                $this.html($this.data('original-text'));
+                }, 2000);
+            });
+
+        });
+
+			$("#Deposito").validate( {
+				rules: {
+
+					TotalLC: {
+						required: true,
+					},
+					JournalRemarks: {
+						required: true,
+					},
+					BankReference: {
+						required: true,
+					
+					},
+                    U_Responsable:{
+                        required: true
+
+                    },
+					
+				},
+				messages: {
+					TotalLC: "Debe ingresar monto de deposito",
+                    JournalRemarks: "Debe ingresar un comentario",
+                    BankReference: "Ingrese número de deposito bancario",
+                    U_Responsable: "Debe ingresar un responsable"
+				},
+				errorElement: "em",
+				errorPlacement: function ( error, element ) {
+					// Add the `help-block` class to the error element
+                    error.css("color", "red")
+					error.addClass( "help-block" );
+
+					element.parents( ".col-sm-5" ).addClass( "has-feedback" );
+
+					if ( element.prop( "type" ) === "checkbox" ) {
+						error.insertAfter( element.parent( "label" ) );
+					} else {
+						error.insertAfter( element );
+					}
+
+			
+					if ( !element.next( "span" )[ 0 ] ) {
+						$( "<span class='glyphicon glyphicon-remove form-control-feedback'></span>" ).insertAfter( element );
+					}
+				},
+				success: function ( label, element ) {
+			
+					if ( !$( element ).next( "span" )[ 0 ] ) {
+						$( "<span class='glyphicon glyphicon-ok form-control-feedback'></span>" ).insertAfter( $( element ) );
+					}
+				},
+				highlight: function ( element, errorClass, validClass ) {
+					$( element ).parents( ".col-sm-5" ).addClass( "has-error" ).removeClass( "has-success" );
+					$( element ).next( "span" ).addClass( "glyphicon-remove" ).removeClass( "glyphicon-ok" );
+				},
+				unhighlight: function ( element, errorClass, validClass ) {
+					$( element ).parents( ".col-sm-5" ).addClass( "has-success" ).removeClass( "has-error" );
+					$( element ).next( "span" ).addClass( "glyphicon-ok" ).removeClass( "glyphicon-remove" );
+				}
+			});
+    </script>
+{% endblock %}

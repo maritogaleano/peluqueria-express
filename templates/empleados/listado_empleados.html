@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block container %} 
+
+        {% block title %}
+
+            <title> Profesionales | Listado </title>
+
+        {% endblock %}
+
+<div class="card">
+    <div class="card-header"><i class="fas fa-user-tie"></i> Profesionales / Listado  </div>
+    <div class="card-body">
+
+        <table id="list" class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Profesional</th>
+                    <th>Documento</th>
+                    <th>Teléfono</th>
+                    <th>E-mail</th>
+                    <th>Dirección</th>
+                    <th>Acciones</th>
+                    </tr>
+                </thead>
+
+             <tbody>
+                    {% for emp in object_list %}
+                        <tr>
+                            <td>{{ emp.id }}</td>
+                            <td>{{ emp.nombre }}</td>
+                            <td>{{ emp.documento }}</td>
+                            <td>{{ emp.telefono }}</td>
+                            <td>{{ emp.email}}</td>
+                            <td>{{ emp.direccion }}</td>
+                            <td>
+                                <button  type="button" class="btn btn-warning">
+                                  <i class="fas fa-edit"></i>
+                                </button>
+
+                                <button  type="button" class="btn btn-danger">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                </tbody>
+         </table>
+    </div>
+    <div class="card-body card-block">
+    
+    <a href="{% url 'profesionales:nuevo_empleado' %}">
+        <button class="btn btn-success">
+            <i class="fas fa-plus"></i> Nuevo Profesional
+        </button>
+    </a>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %} 
+    <script>
+        $(document).ready(function() {
+            $('#list').DataTable({
+                responsive: true,
+                autoWidth: false,
+                ordering: false
+            });
+        } );
+    </script>
+
+{% endblock %}

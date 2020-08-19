@@ -1,0 +1,12 @@
+.modal-backdrop.show {
+    display: none;
+}
+
+.modal.show .modal-dialog{
+ top: 10%;
+}
+
+.menu-sidebar__content .navbar-sidebar .navbar__list li.active > a,
+.menu-sidebar__content .navbar-sidebar .navbar__list li a:hover {
+    color: #28a745;
+}

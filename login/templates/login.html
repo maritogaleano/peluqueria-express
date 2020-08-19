@@ -1,0 +1,81 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title> Peluqueria Express </title>
+
+    <link rel="shortcut icon" href="{% static 'images/icon/favicon.png' %}"/>
+    <link href="{% static 'css/font-face.css' %}" rel="stylesheet" media="all">
+    <link rel="stylesheet" href="{% static 'vendor/fontawesome-free/css/all.min.css' %}">
+    <link href="{% static 'vendor/mdi-font/css/material-design-iconic-font.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/bootstrap-4.1/bootstrap.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'css/theme.css' %}" rel="stylesheet" media="all">
+
+    
+</head>
+
+<body class="animsition">
+    <div class="page-wrapper">
+        <div class="page-content--bge5">
+            <div class="container">
+                <div class="login-wrap">
+                    <div class="login-content">
+                        <div class="login-logo">
+                            <a href="#">
+                                <img src="{% static 'images/icon/adri-2.png' %}" alt="Pelu">
+                            </a>
+                        </div>
+                        <div class="login-form">
+                              <div class="card-body">
+                                    <p class="text-center">
+                                        Ingresa tus credenciales
+                                    </p>
+                                </div>
+
+                            {% if form.errors %}
+                                <div class="sufee-alert alert with-close alert-danger alert-dismissible fade show">
+                                    <span class="badge badge-pill badge-danger"><i class="fas fa-exclamation-circle"></i> Error</span>
+                                    Usuario o contraseña invalidos
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                
+                            {% endif %}
+                            
+                            <form action="." method="post">
+
+                                {% csrf_token %}
+                                
+                                <div class="form-group">
+                                    <label>Usuario</label>
+                                    {{form.username|add_class:'form-control'|attr:'autofocus'|attr:'autocomplete:off'|attr:'placeholder:Usuario'}}
+                                </div>
+                                <div class="form-group">
+                                    <label>Contraseña</label>
+                                    {{form.password|add_class:"form-control"|attr:'placeholder:Contraseña'}}
+                                </div>
+                                <button class="au-btn au-btn--block au-btn--green m-b-20" type="submit">Ingresar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="{% static 'vendor/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+
+</body>
+
+</html>
