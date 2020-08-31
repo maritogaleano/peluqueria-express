@@ -16,6 +16,7 @@ urlpatterns = [
     path('profesionales/', include('empleado.urls')),
     path('servicios/', include('servicios.urls')),
     path('agendamientos/', include('citas.urls')),
+    path('compras/', include('compras.urls')),
     #path('', TemplateView.as_view(template_name='base.html'),name="index"),
 
 
