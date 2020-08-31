@@ -1,0 +1,337 @@
+{% extends 'base.html' %} {% block container %}
+<style>
+  /* The switch - the box around the slider */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  /* The slider */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+  }
+
+  input:checked + .slider {
+    background-color: #2196f3;
+  }
+
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196f3;
+  }
+
+  input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+
+  .slider.round:before {
+    border-radius: 50%;
+  }
+</style>
+<div class="card">
+  <div class="card-header">
+    <i class="fas fa-home"></i> Compras / Registrar Compra de Mercancia
+  </div>
+  <div class="card-body">
+    <div class="card-title">
+      <h3 class="text-center title-2">
+        <i class="fas fa-sheet fa-2x" style="color: #e895ab"></i> Boleta de
+        Compra
+      </h3>
+    </div>
+
+    {% if form.errors %}
+    <div class="alert alert-danger alert-dismissible">
+      <button
+        type="button"
+        class="close"
+        data-dismiss="alert"
+        aria-hidden="true"
+      >
+        ×
+      </button>
+      <h5><i class="icon fas fa-ban"></i> Ha ocurrido un error</h5>
+      <ul>
+        {% for field in form %} {% for error in field.errors %}
+        <li>{{ error }}</li>
+        {% endfor %} {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <form id="Boleta" method="POST">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label class="control-label mb-1">Fecha de Compra</label>
+        {{form.fecha_compra}}
+      </div>
+      <div class="form-group">
+        <label class="control-label mb-1">Facturar?</label>
+        <br />
+        <label class="switch">
+          {{form.facturado}}
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <div id="factura-data-div" style="display: none">
+        <div class="form-group">
+          <label class="control-label mb-1">Fecha de Factura</label>
+          {{form.fecha_facturado}}
+        </div>
+        <div class="form-group">
+          <label class="control-label mb-1">Numero de Factura</label>
+          {{form.numero_factura}}
+        </div>
+      </div>
+      <div class="form-group">
+        <h3 style="text-align: center; background-color: #b4b4b4">Productos</h3>
+        <div id="productos-div">
+          <div class="row" name="productos-data">
+            <div class="col-12 col-lg-3">
+              <input type="hidden" name="almacen-id" value="" />
+              nombre:<input
+                type="text"
+                name="nombre"
+                class="form-control"
+                onkeyup="getProduct(this)"
+              />
+              <div name="resultados"></div>
+            </div>
+            <div class="col-12 col-lg-2">
+              cantidad:<input
+                type="number"
+                name="cantidad"
+                class="form-control"
+                onkeyup="calculateTotal(this)"
+                onchange="calculateTotal(this)"
+              />
+            </div>
+            <div class="col-12 col-lg-2">
+              precio unitario:<input
+                type="number"
+                name="precio_unitario"
+                class="form-control"
+                onkeyup="calculateTotal(this)"
+                onchange="calculateTotal(this)"
+              />
+            </div>
+            <div class="col-12 col-lg-2">
+              total:<input
+                type="number"
+                name="total-producto"
+                class="form-control"
+                readonly
+              />
+            </div>
+            <div class="col-12 col-lg-2">
+              <br />
+              <button
+                type="button"
+                class="btn btn-lg btn-danger btn-block"
+                onclick="dropProductElement(this)"
+              >
+                <i class="fa fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <br />
+          <button
+            type="button"
+            class="btn btn-lg btn-success btn-block"
+            onclick="addProductElement()"
+          >
+            Agregar Producto <i class="fa fa-plus"></i>
+          </button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label mb-1">Sub Total</label>
+        {{form.sub_total}}
+      </div>
+      <div class="form-group">
+        <label class="control-label mb-1">IVA</label>
+        {{form.impuesto_total}}
+      </div>
+      <div class="form-group">
+        <label class="control-label mb-1">Total</label>
+        {{form.total}}
+      </div>
+      <div class="form-group">
+        <label class="control-label mb-1">Comentarios</label>
+        {{form.Comentarios}}
+      </div>
+      <div>
+        <button
+          type="button"
+          class="btn btn-lg btn-info btn-block"
+          onclick="sendData()"
+          data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Aguarde un momento..."
+        >
+          <i class="fas fa-save"></i>
+          <span>Guardar</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  function displayDiv(checked) {
+    console.log(checked);
+    if (checked) {
+      document.getElementById("factura-data-div").style.display = "block";
+    } else {
+      document.getElementById("factura-data-div").style.display = "none";
+    }
+  }
+
+  function addProductElement() {
+    var tmp = document.getElementById("productos-div").lastElementChild;
+    var clone = tmp.cloneNode(true);
+    document.getElementById("productos-div").appendChild(clone);
+  }
+
+  function dropProductElement(element) {
+    element.parentElement.parentElement.remove();
+  }
+
+  function getProduct(element) {
+    var valor = element.value;
+    var x = new XMLHttpRequest();
+    x.open("GET", "/compras/producto/busqueda/?q=" + valor);
+    x.onreadystatechange = function (e) {
+      if (x.readyState == 4) {
+        if (x.status === 200) {
+          x.addEventListener("load", function (e) {
+            writeResults(x.response, element);
+          });
+        } else {
+          console.error(x.status);
+        }
+      }
+    };
+    x.send();
+  }
+
+  function writeResults(data, element) {
+    var row = element.parentElement;
+    var div = row.getElementsByTagName("div")[0];
+
+    div.style.border = "0px";
+    div.innerHTML = "";
+
+    if (element.value != "") {
+      div.style.border = "1px solid #000";
+      dataJson = JSON.parse(data);
+      div.innerHTML +=
+        '<div onclick="valePorUnaFuncion()">Agregar Almacen...</div>';
+      for (var x = 0; x < dataJson.length; x++) {
+        var item_tmp = "<div onclick='writeSelect(this)'>";
+        item_tmp +=
+          "<input name='id' type='hidden' value='" + dataJson[x].id + "'>";
+        item_tmp += "<p>" + dataJson[x].nombre + "</p>";
+        item_tmp += "</div>";
+        div.innerHTML += item_tmp;
+        console.log(dataJson[x].nombre);
+      }
+    }
+  }
+
+  function valePorUnaFuncion() {
+    console.log("funciono");
+  }
+
+  function writeSelect(element) {
+    var row = element.parentElement.parentElement.parentElement;
+    var arrayInputs = row.getElementsByTagName("input");
+
+    // this inputs never change of position
+    arrayInputs[0].value = element.getElementsByTagName("input")[0].value;
+    arrayInputs[1].value = element.getElementsByTagName("p")[0].innerHTML;
+
+    // that other inputs change beacuse results div use hidden inputs
+    arrayInputs[arrayInputs.length - 3].value = 1;
+
+    element.parentElement.style.border = "0px solid #fff";
+    element.parentElement.innerHTML = "";
+  }
+
+  function calculateTotal(element){
+    var row = element.parentElement.parentElement;
+    var arrayInputs = row.getElementsByTagName("input");
+    // that other inputs change beacuse results div use hidden inputs
+    var cantidadTmp = arrayInputs[arrayInputs.length - 3].value;
+    var precioTmp = arrayInputs[arrayInputs.length - 2].value;
+    arrayInputs[arrayInputs.length - 1].value = cantidadTmp*precioTmp;
+    calculateBoleta();
+  }
+
+  function calculateBoleta(){
+    var totals = document.getElementsByName("total-producto");
+    console.log(totals);
+    var totalTmp = 0;
+    for(var x = 0 ; x < totals.length ; x++){
+      console.log(totals[x].value);
+      totalTmp += parseInt(totals[x].value);
+    }
+    document.getElementById("id_sub_total").value = totalTmp;
+    document.getElementById("id_impuesto_total").value = (10 / 100) * totalTmp;
+    document.getElementById("id_total").value = ((10 / 100) * totalTmp) + parseInt(totalTmp);
+  }
+
+  function sendData(){
+    var form = document.getElementById("Boleta");
+    var data = new FormData(form);
+    var x = new XMLHttpRequest();
+    
+    x.open('POST',"{% url 'compras:boleta_nueva' %}")
+    x.onreadystatechange = function (e) {
+    if (x.readyState == 4) {
+        if (x.status === 200) {
+          console.log(x.response);
+        } else {
+            console.error(x.status);
+            }
+    }
+    }
+    x.send(data);
+  }
+</script>
+{% endblock %}
