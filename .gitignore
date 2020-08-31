@@ -1,0 +1,7 @@
+#ignorin python cache files
+*/__pycache__/*
+*/migrations/__pycache__/*
+#ignorin all migrations from makemigrations
+*/migrations/*.py
+#except __init__ file to prevent problems
+!*/migrations/__init__.py
