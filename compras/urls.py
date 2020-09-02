@@ -8,4 +8,5 @@ app_name = 'compras'
 urlpatterns = [
     path('boleta-nueva/', NuevaBoleta.as_view(), name='boleta_nueva'),
     path('producto/busqueda/', BuscarAlmacen, name='producto_busqueda'),
+    path('proveedor/busqueda/', BuscarProveedor, name='proveedor_busqueda'),
 ]

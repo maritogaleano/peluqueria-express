@@ -5,3 +5,4 @@
 */migrations/*.py
 #except __init__ file to prevent problems
 !*/migrations/__init__.py
+*/*/__pycache__/*

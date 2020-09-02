@@ -120,6 +120,18 @@
         </div>
       </div>
       <div class="form-group">
+        <label class="control-label mb-1">Proveedor</label>
+        <input type="hidden" name="proveedor" id="id_proveedor" />
+        <input
+          type="text"
+          name="q-proveedor"
+          id="q-proveedor"
+          class="form-control"
+          onkeyup="busquedaProveedor(value)"
+        />
+        <div id="proveedor-results"></div>
+      </div>
+      <div class="form-group">
         <h3 style="text-align: center; background-color: #b4b4b4">Productos</h3>
         <div id="productos-div">
           <div class="row" name="productos-data">
@@ -196,7 +208,7 @@
       </div>
       <div class="form-group">
         <label class="control-label mb-1">Comentarios</label>
-        {{form.Comentarios}}
+        {{form.comentarios}}
       </div>
       <div>
         <button
@@ -214,7 +226,6 @@
 </div>
 <script>
   function displayDiv(checked) {
-    console.log(checked);
     if (checked) {
       document.getElementById("factura-data-div").style.display = "block";
     } else {
@@ -269,14 +280,11 @@
         item_tmp += "<p>" + dataJson[x].nombre + "</p>";
         item_tmp += "</div>";
         div.innerHTML += item_tmp;
-        console.log(dataJson[x].nombre);
       }
     }
   }
 
-  function valePorUnaFuncion() {
-    console.log("funciono");
-  }
+  function valePorUnaFuncion() {}
 
   function writeSelect(element) {
     var row = element.parentElement.parentElement.parentElement;
@@ -293,45 +301,106 @@
     element.parentElement.innerHTML = "";
   }
 
-  function calculateTotal(element){
+  function calculateTotal(element) {
     var row = element.parentElement.parentElement;
     var arrayInputs = row.getElementsByTagName("input");
     // that other inputs change beacuse results div use hidden inputs
     var cantidadTmp = arrayInputs[arrayInputs.length - 3].value;
     var precioTmp = arrayInputs[arrayInputs.length - 2].value;
-    arrayInputs[arrayInputs.length - 1].value = cantidadTmp*precioTmp;
+    arrayInputs[arrayInputs.length - 1].value = cantidadTmp * precioTmp;
     calculateBoleta();
   }
 
-  function calculateBoleta(){
+  function calculateBoleta() {
     var totals = document.getElementsByName("total-producto");
-    console.log(totals);
     var totalTmp = 0;
-    for(var x = 0 ; x < totals.length ; x++){
-      console.log(totals[x].value);
+    for (var x = 0; x < totals.length; x++) {
       totalTmp += parseInt(totals[x].value);
     }
     document.getElementById("id_sub_total").value = totalTmp;
     document.getElementById("id_impuesto_total").value = (10 / 100) * totalTmp;
-    document.getElementById("id_total").value = ((10 / 100) * totalTmp) + parseInt(totalTmp);
+    document.getElementById("id_total").value =
+      (10 / 100) * totalTmp + parseInt(totalTmp);
   }
 
-  function sendData(){
+  function sendData() {
     var form = document.getElementById("Boleta");
     var data = new FormData(form);
     var x = new XMLHttpRequest();
-    
-    x.open('POST',"{% url 'compras:boleta_nueva' %}")
+
+    x.open("POST", "{% url 'compras:boleta_nueva' %}");
     x.onreadystatechange = function (e) {
-    if (x.readyState == 4) {
+      if (x.readyState == 4) {
         if (x.status === 200) {
           console.log(x.response);
+          console.log(typeof x.response);
+          dataJson = JSON.parse(x.response);
+          if ((dataJson["status"] = "success")) {
+            Swal.fire(
+              "Boleta Registrada Correctamente",
+              "Pulsa el boton para refrescar",
+              "success"
+            ).then((result) => {
+              window.location.reload();
+            });
+          } else {
+            Swal.fire("Algo salio mal :(", data["details"], "error");
+          }
         } else {
-            console.error(x.status);
-            }
-    }
-    }
+          console.error(x.status);
+        }
+      }
+    };
     x.send(data);
+  }
+
+  function busquedaProveedor(q) {
+    var x = new XMLHttpRequest();
+    x.open("GET", "/compras/proveedor/busqueda/?q=" + q);
+    x.onreadystatechange = function (e) {
+      if (x.readyState == 4) {
+        if (x.status === 200) {
+          x.addEventListener("load", function (e) {
+            var data = x.response;
+            var div = document.getElementById("proveedor-results");
+
+            div.style.border = "0px";
+            div.innerHTML = "";
+
+            if (q != "") {
+              div.style.border = "1px solid #000";
+              dataJson = JSON.parse(data);
+              div.innerHTML +=
+                '<div onclick="valePorUnaFuncion()">Agregar Proveedor...</div>';
+              for (var y = 0; y < dataJson.length; y++) {
+                var item_tmp = "<div onclick='writeProveedor(this)'>";
+                item_tmp +=
+                  "<input name='id' type='hidden' value='" +
+                  dataJson[y].id +
+                  "'>";
+                item_tmp += "<p>" + dataJson[y].nombre + "</p>";
+                item_tmp += "</div>";
+                div.innerHTML += item_tmp;
+              }
+            }
+          });
+        } else {
+          console.error(x.status);
+        }
+      }
+    };
+    x.send();
+  }
+
+  function writeProveedor(element) {
+    document.getElementById(
+      "id_proveedor"
+    ).value = element.getElementsByTagName("input")[0].value;
+    document.getElementById("q-proveedor").value = element.getElementsByTagName(
+      "p"
+    )[0].innerHTML;
+    document.getElementById("proveedor-results").style.border = "0px";
+    document.getElementById("proveedor-results").innerHTML = "";
   }
 </script>
 {% endblock %}

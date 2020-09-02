@@ -5,7 +5,7 @@ class BoletaForm(forms.ModelForm):
     class Meta:
         model = BoletaCompra
         fields = ('__all__')
-        exclude = ('detalles',)
+        exclude = ('detalles','proveedor')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -21,4 +21,4 @@ class BoletaForm(forms.ModelForm):
         self.fields['sub_total'].widget.attrs.update({'class': 'form-control','readonly':'readonly'})
         self.fields['impuesto_total'].widget.attrs.update({'class': 'form-control','readonly':'readonly'})
         self.fields['total'].widget.attrs.update({'class': 'form-control','readonly':'readonly'})
-        self.fields['Comentarios'].widget.attrs.update({'class': 'form-control'})
+        self.fields['comentarios'].widget.attrs.update({'class': 'form-control'})

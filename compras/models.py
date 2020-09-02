@@ -34,14 +34,14 @@ class Proveedor(models.Model):
 class BoletaCompra(models.Model):
     fecha_compra = models.DateField(default=None, null=False)
     numero_factura = models.CharField(default="0", null=True,max_length=25)
-    fecha_facturado = models.DateField(default=None, null=False)
+    fecha_facturado = models.DateField(default=None, null=True)
     facturado = models.BooleanField(default=False)
     proveedor = models.ForeignKey(
         Proveedor, related_name="compra_a_proveedor", on_delete=models.CASCADE)
     sub_total = models.FloatField(default=0)
     # impuesto en 10%
     impuesto_total = models.FloatField(default=0)
-    Comentarios = models.TextField(default="")
+    comentarios = models.TextField(default="")
     # detalle
     detalles = models.ManyToManyField(Almacen,through="DetalleCompra",related_name="productos_comprados")
     total = models.FloatField(default=0)
