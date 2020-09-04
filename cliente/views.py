@@ -45,6 +45,10 @@ class ListadoClientes(ListView):
     def get_queryset(self):
        return Clientes.objects.order_by('id').filter(estado=True)
 
+
+
+
+
   
      
 

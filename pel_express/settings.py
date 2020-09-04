@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     #Librerias
     'simple_history',
     'sweetify',
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
     'trabajos',
     'citas',
     'login',
+
 
 ]
 
