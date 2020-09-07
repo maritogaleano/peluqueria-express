@@ -1,0 +1,126 @@
+{% extends 'base.html' %} {% block container %}
+<div class="card">
+  <div class="card-header">
+    <i class="fas fa-box-open"></i> Compras / Proveedores
+  </div>
+  <div class="card-body">
+    <div class="card-title">
+      <h3 class="text-center title-2">
+        <i class="fas fa-sheet fa-2x" style="color: #e895ab"></i> Administrar
+        Proveedores
+      </h3>
+      {% csrf_token %}
+    </div>
+    <table id="providers" class="table" style="width: 100%">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Accion</th>
+        </tr>
+      </thead>
+      <tfoot>
+        <tr></tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="card-body card-block">
+        <button class="btn btn-success"  data-toggle="modal" data-target="#providerModal">
+            <i class="fas fa-plus"></i> Nuevo Proveedor
+        </button>
+    </div>
+</div>
+{% include "compras/new-provider-modal.html" %}
+<script>
+  $(document).ready(function () {
+    $("#providers").DataTable({
+      ajax: {
+        url: "/compras/proveedor/busqueda/?q=",
+        type: "GET",
+        data: { origin: "dataTable" },
+        dataSrc: "",
+      },
+      columns: [{ data: "nombre" }, { data: "nombre" }],
+      columnDefs: [
+        {
+          targets: [1],
+          class: "text-center",
+          orderable: false,
+          render: function (data, type, row) {
+            let editLink = "<a href='/compras/proveedores/" + row["id"] + "/'>";
+            editLink += "<button type='button' class='btn btn-warning'>";
+            editLink += "<i class='fas fa-edit'></i></button></a>";
+            let deleteLink =
+              "<button onclick='delete_provider(" + row["id"] + ")' ";
+            deleteLink += "type='button' class='btn btn-danger'>";
+            deleteLink += "<i class='fas fa-trash-alt'></i></button>";
+            return editLink + deleteLink;
+          },
+        },
+      ],
+    });
+  });
+
+  function delete_provider(pk) {
+    console.log(pk);
+    let csrfmiddlewaretoken = document.getElementsByName(
+      "csrfmiddlewaretoken"
+    )[0].value;
+    $.confirm({
+      theme: "modern",
+      title: "Eliminar proveedor",
+      icon: "fa fa-info",
+      content: "Desea eliminar al proveedor seleccionado?",
+      columnClass: "small",
+      typeAnimated: true,
+      cancelButtonClass: "btn-primary",
+      draggable: true,
+      dragWindowBorder: false,
+      buttons: {
+        info: {
+          text: "Si",
+          btnClass: "btn-primary",
+          action: function () {
+            $.ajax({
+              url: "/compras/proveedores/eliminar",
+              data: {
+                id: pk,
+                csrfmiddlewaretoken: csrfmiddlewaretoken,
+              },
+              method: "POST",
+              dataType: "json",
+              success: function (request) {
+                console.log(request);
+                if (!request.hasOwnProperty("error")) {
+                  Swal.fire(
+                    "Proveedor eliminado sin problemas",
+                    "Pulsa el boton para refrescar",
+                    "success"
+                  ).then((result) => {
+                    window.location.reload();
+                    return false;
+                  });
+                }else{
+                    Swal.fire(
+                    "El proveedor no se pudo eliminar",
+                    request.error,
+                    "error"
+                  );
+                  return false;
+                }
+              },
+              error: function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown + " " + textStatus);
+              },
+            });
+          },
+        },
+        danger: {
+          text: "No",
+          btnClass: "btn-red",
+          action: function () {},
+        },
+      },
+    });
+  }
+</script>
+{% endblock %}

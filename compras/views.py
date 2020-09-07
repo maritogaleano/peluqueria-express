@@ -1,9 +1,12 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, View, FormView
 from .business_logic.boleta import saveBoletaFromRequest
+from django.shortcuts import render, redirect
 from .models import Almacen, Proveedor
 from django.http import JsonResponse
-from django.shortcuts import render
-from .forms import BoletaForm
+from django.urls import reverse_lazy
+from .forms import *
+import sweetify
+
 # Create your views here.
 
 
@@ -12,21 +15,20 @@ class NuevaBoleta(CreateView):
     form_class = BoletaForm
 
     def post(self, request, *args, **kwargs):
-        response = {"status":"success","details":""}
+        response = {"status": "success", "details": ""}
         try:
             form = BoletaForm(request.POST)
-            print("here")
             if form.is_valid():
-                print("enter here")
                 boleta = form.save(commit=False)
                 saveBoletaFromRequest(boleta, request.POST)
             else:
                 for field, errors in form.errors.items():
                     response["details"] += ";"+str(field)+"<>"+str(errors)
         except Exception as e:
-            response["status"]="error"
+            response["status"] = "error"
             response["details"] = str(e)
         return JsonResponse(response, safe=False)
+
 
 def BuscarAlmacen(request):
     productos = list(Almacen.objects.filter(
@@ -34,16 +36,42 @@ def BuscarAlmacen(request):
     return JsonResponse(productos, safe=False)
 
 
-def BuscarProveedor(request):
-    proveedores = list(Proveedor.objects.filter(
-        nombre__istartswith=request.GET.get("q")).values()[:10])
-    return JsonResponse(proveedores, safe=False)
+# Proveedores
 
-    # def post(self, request, *args, **kwargs):
-    # try:
-    #     super().post(request, *args, **kwargs)
-    # except IntegrityError:
-    #     messages.add_message(request, messages.ERROR,
-    #                          'You already have registered a Client with this name. ' + \
-    #                          'All of your Client names must be unique.')
-    #     return render(request, template_name=self.template_name, context=self.get_context_data())
+def proveedores(request):
+    return render(request, 'compras/proveedores.html')
+
+def new_provider(request):
+    try:
+        pro = Proveedor()
+        pro.nombre = request.POST["name"]
+        pro.save()
+        sweetify.success(request, 'Proovedor Guardado Correctamente')
+    except Exception as e:
+        sweetify.error(request, str(e))
+    
+    return redirect('compras:proveedores')
+
+class ProveedorUpdate(sweetify.views.SweetifySuccessMixin,UpdateView):
+    model = Proveedor
+    form_class = ProveedorForm
+    template_name = 'compras/edit-provider.html'
+    success_url = reverse_lazy('compras:proveedores')
+    success_message = 'Actualizado correctamente'
+
+def delete_provider(request):
+    try:
+        pro = Proveedor.objects.get(pk=request.POST['id'])
+        pro.delete()
+        return JsonResponse({'messaje': 'Proveedor eliminado sin problemas'})
+    except Exception as e:
+        return JsonResponse({'error': str(e)})
+
+
+def BuscarProveedor(request):
+    query = Proveedor.objects.values()
+    if request.GET.get("origin") != "dataTable":
+        proveedores = list(query.filter(
+            nombre__istartswith=request.GET.get("q")).values()[:20])
+    proveedores = list(query)
+    return JsonResponse(proveedores, safe=False)

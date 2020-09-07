@@ -121,6 +121,27 @@
                     </ul>
                 </li>
 
+                <li class="has-sub">
+                    <a class="js-arrow" href="#">
+                        <i class="fas fa-box-open"></i>Compras
+                        <span class="arrow">
+                            <i class="fas fa-angle-down"></i>
+                        </span>
+                    </a>
+                    <ul class="list-unstyled navbar__sub-list js-sub-list">
+                        <li>
+                            <a href="{% url 'compras:boleta_nueva' %}">
+                            <i class="far fa-circle"></i>Nueva Boleta de Compra</a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'compras:proveedores' %}">
+                           <i class="far fa-circle"></i>Proveedores</a>
+                       </li>
+                     
+                    </ul>
+                </li>
+
 
             </ul>
         </nav>
