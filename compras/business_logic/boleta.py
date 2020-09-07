@@ -1,13 +1,9 @@
 from compras.models import BoletaCompra,Proveedor,DetalleCompra,Almacen
-from compras.business_logic.almacen import *
-
 
 def saveBoletaFromRequest(boleta,data):
-    print(boleta,data)
     proveedor = Proveedor.objects.get(pk=data["proveedor"])
     boleta.proveedor = proveedor
     boleta.save()
-    print(boleta)
     setItemsFromBoleta(boleta,data)
 
 def setItemsFromBoleta(boleta,data):
@@ -19,8 +15,6 @@ def setItemsFromBoleta(boleta,data):
         detail_data["cantidad"] = data.getlist("cantidad")[x]
         detail_data["precio_unitario"] = data.getlist("precio_unitario")[x]
         detail_data["total"] = data.getlist("total-producto")[x]
-        print(detail_data["precio_unitario"])
-        print(str(float(detail_data["precio_unitario"])))
         # detail_data["precio_unitario"] = float(data.getlist("almacen-id")[x])
         # detail_data["total"] = round( float(data["cantidad"]) * float(data["precio_unitario"]),2)
         # total = total + detail_data["total"]
