@@ -1,0 +1,2 @@
+def setItemsToStore():
+    return True

@@ -1,0 +1,96 @@
+<div
+  class="modal fade"
+  id="providerModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Nuevo Almacen</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="POST" action="{% url 'compras:new_product' %}">
+        <div class="modal-body">
+          {% csrf_token %}
+
+
+          <div class="form-group">
+            <label class="control-label mb-1">Nombre</label>
+            <input
+              type="text"
+              name="nombre"
+              value=""
+              maxlength="25"
+              class="form-control"
+              placeholder="Nombre"
+              autocomplete="off"
+              required=""
+              id="id_nombre"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="control-label mb-1">Detalle</label>
+            <textarea
+              name="detalle"
+              cols="40"
+              rows="10"
+              class="form-control"
+              placeholder="Descripcion del producto"
+              autocomplete="off"
+              required=""
+              id="id_detalle"
+            ></textarea
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="control-label mb-1">Precio</label>
+            <input
+              type="number"
+              name="precio"
+              value=""
+              step="any"
+              class="form-control"
+              placeholder="precio"
+              autocomplete="off"
+              required=""
+              id="id_precio"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="control-label mb-1">Cantidad</label>
+            <input
+              type="number"
+              name="cantidad"
+              value="1"
+              class="form-control"
+              placeholder="precio"
+              autocomplete="off"
+              required=""
+              id="id_cantidad"
+            />
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -30,16 +30,11 @@ class NuevaBoleta(CreateView):
         return JsonResponse(response, safe=False)
 
 
-def BuscarAlmacen(request):
-    productos = list(Almacen.objects.filter(
-        nombre__istartswith=request.GET.get("q")).values()[:20])
-    return JsonResponse(productos, safe=False)
-
-
 # Proveedores
 
 def proveedores(request):
     return render(request, 'compras/proveedores.html')
+
 
 def new_provider(request):
     try:
@@ -49,15 +44,16 @@ def new_provider(request):
         sweetify.success(request, 'Proovedor Guardado Correctamente')
     except Exception as e:
         sweetify.error(request, str(e))
-    
     return redirect('compras:proveedores')
 
-class ProveedorUpdate(sweetify.views.SweetifySuccessMixin,UpdateView):
+
+class ProveedorUpdate(sweetify.views.SweetifySuccessMixin, UpdateView):
     model = Proveedor
     form_class = ProveedorForm
     template_name = 'compras/edit-provider.html'
     success_url = reverse_lazy('compras:proveedores')
     success_message = 'Actualizado correctamente'
+
 
 def delete_provider(request):
     try:
@@ -71,7 +67,44 @@ def delete_provider(request):
 def BuscarProveedor(request):
     query = Proveedor.objects.values()
     if request.GET.get("origin") != "dataTable":
-        proveedores = list(query.filter(
-            nombre__istartswith=request.GET.get("q")).values()[:20])
+        query = query.filter(
+            nombre__istartswith=request.GET.get("q")).values()[:20]
     proveedores = list(query)
     return JsonResponse(proveedores, safe=False)
+
+# Products
+
+def almacenes(request):
+    return render(request,'compras/almacenes.html')
+
+def BuscarAlmacen(request):
+    query = Almacen.objects.values()
+    if request.GET.get("origin") != "dataTable":
+        query = query.filter(
+            nombre__istartswith=request.GET.get("q")).values()[:20]
+    productos = list(query)
+    return JsonResponse(productos, safe=False)
+
+def new_product(request):
+    try:
+        form = ProductForm(request.POST)
+        form.save()
+        sweetify.success(request, 'Almacen Guardado Correctamente')
+    except Exception as e:
+        sweetify.error(request, str(e))
+    return redirect('compras:almacenes')
+
+class ProductUpdate(sweetify.views.SweetifySuccessMixin, UpdateView):
+    model = Almacen
+    form_class = ProductForm
+    template_name = 'compras/edit-product.html'
+    success_url = reverse_lazy('compras:almacenes')
+    success_message = 'Actualizado correctamente'
+
+def delete_products(request):
+    try:
+        alm = Almacen.objects.get(pk=request.POST['id'])
+        alm.delete()
+        return JsonResponse({'messaje': 'Almacen eliminado sin problemas'})
+    except Exception as e:
+        return JsonResponse({'error': str(e)})

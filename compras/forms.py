@@ -1,4 +1,4 @@
-from .models import BoletaCompra,Proveedor
+from .models import BoletaCompra,Proveedor,Almacen
 from django import forms
 
 class BoletaForm(forms.ModelForm):
@@ -34,3 +34,19 @@ class ProveedorForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['nombre'].widget.attrs.update(
             {'class': 'form-control','placeholder':'Nombre del Proveedor', 'autocomplete': 'off'})
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Almacen
+        fields = ('__all__')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['nombre'].widget.attrs.update(
+            {'class': 'form-control','placeholder':'Nombre', 'autocomplete': 'off'})
+        self.fields['detalle'].widget.attrs.update(
+            {'class': 'form-control','placeholder':'Descripcion del producto', 'autocomplete': 'off'})
+        self.fields['precio'].widget.attrs.update(
+            {'class': 'form-control','placeholder':'precio', 'autocomplete': 'off'})
+        self.fields['cantidad'].widget.attrs.update(
+            {'class': 'form-control','placeholder':'precio', 'autocomplete': 'off'})
