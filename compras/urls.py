@@ -4,6 +4,8 @@ from .views import *
 app_name = 'compras'
 
 urlpatterns = [
+    path('boletas/', boletas, name='boletas'),
+    path('boletas/data_table/', boletas_json, name='boletas_json'),
     path('boleta-nueva/', NuevaBoleta.as_view(), name='boleta_nueva'),
     path('producto/busqueda/', BuscarAlmacen, name='producto_busqueda'),
     path('producto/almacenes/', almacenes, name='almacenes'),

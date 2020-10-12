@@ -28,12 +28,18 @@ class BoletaForm(forms.ModelForm):
 class ProveedorForm(forms.ModelForm):
     class Meta:
         model = Proveedor
-        fields = ('nombre',)
+        fields = ('nombre','ruc','direccion','telefono')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['nombre'].widget.attrs.update(
             {'class': 'form-control','placeholder':'Nombre del Proveedor', 'autocomplete': 'off'})
+        self.fields['ruc'].widget.attrs.update(
+            {'class': 'form-control','placeholder':'RUC del Proveedor', 'autocomplete': 'off'})
+        self.fields['direccion'].widget.attrs.update(
+            {'class': 'form-control','placeholder':'Direccion del Proveedor', 'autocomplete': 'off'})
+        self.fields['telefono'].widget.attrs.update(
+            {'class': 'form-control','placeholder':'Telefono del Proveedor', 'autocomplete': 'off'})
 
 class ProductForm(forms.ModelForm):
     class Meta:

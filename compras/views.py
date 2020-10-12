@@ -1,13 +1,15 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, View, FormView
 from .business_logic.boleta import saveBoletaFromRequest
+from .models import Almacen, Proveedor, BoletaCompra
 from django.shortcuts import render, redirect
-from .models import Almacen, Proveedor
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from .forms import *
 import sweetify
 
 # Create your views here.
+
+# boletas
 
 
 class NuevaBoleta(CreateView):
@@ -22,24 +24,37 @@ class NuevaBoleta(CreateView):
                 boleta = form.save(commit=False)
                 saveBoletaFromRequest(boleta, request.POST)
             else:
+                response["status"] = "error"
                 for field, errors in form.errors.items():
-                    response["details"] += ";"+str(field)+"<>"+str(errors)
+                    response["details"] += str(field)+" : "+str(errors.as_text()+"    ")
         except Exception as e:
+            if hasattr(boleta, 'pk'):
+                boleta.delete()
             response["status"] = "error"
             response["details"] = str(e)
         return JsonResponse(response, safe=False)
 
 
+def boletas(request):
+    return render(request, 'compras/boletas.html')
+
+
+def boletas_json(request):
+    boletas = list(BoletaCompra.objects.values(
+        'id','fecha_compra', 'facturado', 'sub_total', 'impuesto_total', 'comentarios', 'total', 'proveedor__nombre'))
+    return JsonResponse(boletas, safe=False)
+
 # Proveedores
+
 
 def proveedores(request):
     return render(request, 'compras/proveedores.html')
 
 
 def new_provider(request):
+    print(request.POST)
     try:
-        pro = Proveedor()
-        pro.nombre = request.POST["name"]
+        pro = ProveedorForm(request.POST)
         pro.save()
         sweetify.success(request, 'Proovedor Guardado Correctamente')
     except Exception as e:
@@ -53,6 +68,10 @@ class ProveedorUpdate(sweetify.views.SweetifySuccessMixin, UpdateView):
     template_name = 'compras/edit-provider.html'
     success_url = reverse_lazy('compras:proveedores')
     success_message = 'Actualizado correctamente'
+
+    def post(self,*args,**kwargs):
+        print(self.request.POST)
+        super().post(*args, **kwargs)
 
 
 def delete_provider(request):
@@ -74,8 +93,10 @@ def BuscarProveedor(request):
 
 # Products
 
+
 def almacenes(request):
-    return render(request,'compras/almacenes.html')
+    return render(request, 'compras/almacenes.html')
+
 
 def BuscarAlmacen(request):
     query = Almacen.objects.values()
@@ -84,6 +105,7 @@ def BuscarAlmacen(request):
             nombre__istartswith=request.GET.get("q")).values()[:20]
     productos = list(query)
     return JsonResponse(productos, safe=False)
+
 
 def new_product(request):
     try:
@@ -94,12 +116,14 @@ def new_product(request):
         sweetify.error(request, str(e))
     return redirect('compras:almacenes')
 
+
 class ProductUpdate(sweetify.views.SweetifySuccessMixin, UpdateView):
     model = Almacen
     form_class = ProductForm
     template_name = 'compras/edit-product.html'
     success_url = reverse_lazy('compras:almacenes')
     success_message = 'Actualizado correctamente'
+
 
 def delete_products(request):
     try:

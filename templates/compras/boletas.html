@@ -1,23 +1,26 @@
 {% extends 'base.html' %} {% block container %}
 <div class="card">
   <div class="card-header">
-    <i class="fas fa-box-open"></i> Compras / Almacenes
+    <i class="fas fa-box-open"></i> Compras / Boletas
   </div>
   <div class="card-body">
     <div class="card-title">
       <h3 class="text-center title-2">
         <i class="fas fa-sheet fa-2x" style="color: #e895ab"></i> Administrar
-        Almacenes
+        Boletas
       </h3>
       {% csrf_token %}
     </div>
-    <table id="providers" class="table" style="width: 100%">
+    <table id="boletas" class="table" style="width: 100%">
       <thead>
         <tr>
-          <th>Nombre</th>
-          <th>Detalle</th>
-          <th>Precio</th>
-          <th>Cantidad</th>
+          <th>#</th>
+          <th>Fecha</th>
+          <th>Factura</th>
+          <th>Proveedor</th>
+          <th>Sub Total</th>
+          <th>Impuesto</th>
+          <th>Total</th>
           <th>Accion</th>
         </tr>
       </thead>
@@ -29,35 +32,59 @@
   <div class="card-body card-block">
     <button
       class="btn btn-success"
-      data-toggle="modal"
-      data-target="#ProductModal"
+      id="nueva-boleta"
     >
-      <i class="fas fa-plus"></i> Nuevo Proveedor
+      <i class="fas fa-plus"></i> Nueva Boleta
     </button>
   </div>
 </div>
-{% include "compras/new-product-modal.html" %}
+<script type="text/javascript">
+  document.getElementById("nueva-boleta").onclick = function () {
+      location.href = "{% url 'compras:boleta_nueva' %}";
+  };
+</script>
 <script>
   $(document).ready(function () {
-    $("#providers").DataTable({
+    $("#boletas").DataTable({
       ajax: {
-        url: "/compras/producto/busqueda/?q=",
+        url: "/compras/boletas/data_table/",
         type: "GET",
-        data: { origin: "dataTable" },
+        data: "",
         dataSrc: "",
       },
-      columns: [{ data: "nombre" }, { data: "detalle" },{data: "precio" }, { data: "cantidad" },{data:"id"}],
+      columns: [
+        { data: "id" },
+        { data: "fecha_compra" },
+        { data: "facturado" },
+        { data: "proveedor__nombre" },
+        { data: "sub_total" },
+        { data: "impuesto_total" },
+        { data: "total" },
+      ],
       columnDefs: [
         {
-          targets: [4],
+          targets: [2],
           class: "text-center",
           orderable: false,
           render: function (data, type, row) {
-            let editLink = "<a href='/compras/producto/" + row["id"] + "/'>";
+            let icon = "<i class='fa fa-times' aria-hidden='true'></i>";
+            console.log(row["facturado"]);
+            if (row["facturado"]) {
+              icon = "<i class='fa fa-check' aria-hidden='true'></i>";
+            }
+            return icon;
+          },
+        },
+        {
+          targets: [7],
+          class: "text-center",
+          orderable: false,
+          render: function (data, type, row) {
+            let editLink = "<a href='/compras/proveedores/" + row["id"] + "/'>";
             editLink += "<button type='button' class='btn btn-warning'>";
             editLink += "<i class='fas fa-edit'></i></button></a>";
             let deleteLink =
-              "<button onclick='delete_product(" + row["id"] + ")' ";
+              "<button onclick='delete_provider(" + row["id"] + ")' ";
             deleteLink += "type='button' class='btn btn-danger'>";
             deleteLink += "<i class='fas fa-trash-alt'></i></button>";
             return editLink + deleteLink;
@@ -67,7 +94,7 @@
     });
   });
 
-  function delete_product(pk) {
+  function delete_provider(pk) {
     console.log(pk);
     let csrfmiddlewaretoken = document.getElementsByName(
       "csrfmiddlewaretoken"
@@ -88,7 +115,7 @@
           btnClass: "btn-primary",
           action: function () {
             $.ajax({
-              url: "/compras/producto/eliminar/",
+              url: "/compras/proveedores/eliminar",
               data: {
                 id: pk,
                 csrfmiddlewaretoken: csrfmiddlewaretoken,
@@ -106,8 +133,8 @@
                     window.location.reload();
                     return false;
                   });
-                }else{
-                    Swal.fire(
+                } else {
+                  Swal.fire(
                     "El proveedor no se pudo eliminar",
                     request.error,
                     "error"

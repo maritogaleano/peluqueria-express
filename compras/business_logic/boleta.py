@@ -11,28 +11,23 @@ def setItemsFromBoleta(boleta,data):
     count = len(data.getlist("almacen-id"))
     total = 0
     for x in range(count):
-        detail_data["pk"] = data.getlist("almacen-id")[x]
-        detail_data["cantidad"] = data.getlist("cantidad")[x]
-        detail_data["precio_unitario"] = data.getlist("precio_unitario")[x]
-        detail_data["total"] = data.getlist("total-producto")[x]
         # detail_data["precio_unitario"] = float(data.getlist("almacen-id")[x])
         # detail_data["total"] = round( float(data["cantidad"]) * float(data["precio_unitario"]),2)
         # total = total + detail_data["total"]
-        saveDetalle(detail_data,boleta)
+        saveDetalle(data,boleta,x)
     # recalculateTaxAndTotal(boleta,total)
 
-def saveDetalle(data,boleta):
-    item = Almacen.objects.get(pk=data["pk"])
+def saveDetalle(data,boleta,index):
+    item = Almacen.objects.get(pk=data.getlist("almacen-id")[index])
     detail_tmp = DetalleCompra()
     detail_tmp.boleta = boleta
     detail_tmp.almacen = item
-    detail_tmp.cantidad = data["cantidad"]
-    detail_tmp.precio_unitario = data["precio_unitario"]
-    detail_tmp.total = data["total"]
+    detail_tmp.cantidad = data.getlist("cantidad")[index]
+    detail_tmp.precio_unitario = data.getlist("precio_unitario")[index]
+    detail_tmp.total = data.getlist("total-producto")[index]
     detail_tmp.save()
     #add count items in store
-    item.cantidad = int(item.cantidad) + int(detail_tmp.cantidad) 
-    item.save()
+    item.sumar_almacen(detail_tmp.cantidad)
 
 def recalculateTaxAndTotal(boleta,total):
     sub_total = total

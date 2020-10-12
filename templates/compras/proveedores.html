@@ -15,6 +15,9 @@
       <thead>
         <tr>
           <th>Nombre</th>
+          <th>RUC</th>
+          <th>Direccion</th>
+          <th>Telefono</th>
           <th>Accion</th>
         </tr>
       </thead>
@@ -39,10 +42,10 @@
         data: { origin: "dataTable" },
         dataSrc: "",
       },
-      columns: [{ data: "nombre" }, { data: "nombre" }],
+      columns: [{ data: "nombre" }, { data: "ruc" }, { data: "direccion" }, { data: "telefono" }, { data: "nombre" }],
       columnDefs: [
         {
-          targets: [1],
+          targets: [4],
           class: "text-center",
           orderable: false,
           render: function (data, type, row) {

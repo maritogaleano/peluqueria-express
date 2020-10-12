@@ -119,17 +119,9 @@
           {{form.numero_factura}}
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group" id="provider-select-div">
         <label class="control-label mb-1">Proveedor</label>
-        <input type="hidden" name="proveedor" id="id_proveedor" />
-        <input
-          type="text"
-          name="q-proveedor"
-          id="q-proveedor"
-          class="form-control"
-          onkeyup="busquedaProveedor(value)"
-        />
-        <div id="proveedor-results"></div>
+        <select id="provider-select" name="proveedor"></select>
       </div>
       <div class="form-group">
         <h3 style="text-align: center; background-color: #b4b4b4">Productos</h3>
@@ -137,11 +129,12 @@
           <div class="row" name="productos-data">
             <div class="col-12 col-lg-3">
               <input type="hidden" name="almacen-id" value="" />
-              nombre:<input
+                nombre:<input
                 type="text"
                 name="nombre"
                 class="form-control"
                 onkeyup="getProduct(this)"
+                autocomplete="off"
               />
               <div name="resultados"></div>
             </div>
@@ -223,8 +216,42 @@
       </div>
     </form>
   </div>
+  {% include "compras/new-provider-modal.html" %}
+  {% include "compras/new-product-modal.html" %}
 </div>
 <script>
+  $(document).ready(function () {
+    // provider
+
+    $("#provider-select")
+      .select2({
+        ajax: {
+          url: "/compras/proveedor/busqueda/?origin=DataTable&q=",
+          // dataType: "json",
+          processResults: function (data) {
+            // Transforms the top-level key of the response object from 'items' to 'results'
+            var data = $.map(data, function (obj) {
+              obj.id = obj.id || obj.pk; // replace pk with your identifier
+              obj.text = obj.text || obj.nombre + ":" + obj.ruc; // replace name with the property used for the text
+              return obj;
+            });
+            return {
+              results: data,
+            };
+          },
+        },
+      })
+      .on("select2:open", () => {
+        $(".select2-results:not(:has(a))").append(
+          '<a href="#" onclick="newProvider()" style="padding: 6px;height: 20px;display: inline-table;">Crear Proveedor</a>'
+        );
+      });
+
+    $(".select2-search__field").on("keyup", function (e) {
+      console.log($(this).val());
+    });
+  });
+
   function displayDiv(checked) {
     if (checked) {
       document.getElementById("factura-data-div").style.display = "block";
@@ -236,6 +263,10 @@
   function addProductElement() {
     var tmp = document.getElementById("productos-div").lastElementChild;
     var clone = tmp.cloneNode(true);
+    var inputs = clone.getElementsByTagName("input");
+    for (index = 0; index < inputs.length; index++) {
+      inputs[index].value = "";
+    }
     document.getElementById("productos-div").appendChild(clone);
   }
 
@@ -272,7 +303,7 @@
       div.style.border = "1px solid #000";
       dataJson = JSON.parse(data);
       div.innerHTML +=
-        '<div onclick="valePorUnaFuncion()">Agregar Almacen...</div>';
+        '<div onclick="newProduct(this,\''+element.value+'\')">Agregar Almacen '+element.value+'...</div>';
       for (var x = 0; x < dataJson.length; x++) {
         var item_tmp = "<div onclick='writeSelect(this)'>";
         item_tmp +=
@@ -284,7 +315,9 @@
     }
   }
 
-  function valePorUnaFuncion() {}
+  function valePorUnaFuncion() {
+    console.log("xD");
+  }
 
   function writeSelect(element) {
     var row = element.parentElement.parentElement.parentElement;
@@ -335,7 +368,7 @@
           console.log(x.response);
           console.log(typeof x.response);
           dataJson = JSON.parse(x.response);
-          if ((dataJson["status"] = "success")) {
+          if ((dataJson["status"] == "success")) {
             Swal.fire(
               "Boleta Registrada Correctamente",
               "Pulsa el boton para refrescar",
@@ -344,7 +377,7 @@
               window.location.reload();
             });
           } else {
-            Swal.fire("Algo salio mal :(", data["details"], "error");
+            Swal.fire("Algo salio mal :(", dataJson["details"], "error");
           }
         } else {
           console.error(x.status);
@@ -371,7 +404,7 @@
               div.style.border = "1px solid #000";
               dataJson = JSON.parse(data);
               div.innerHTML +=
-                '<div onclick="valePorUnaFuncion()">Agregar Proveedor...</div>';
+                '<div onclick="newProvider()">Agregar Proveedor...</div>';
               for (var y = 0; y < dataJson.length; y++) {
                 var item_tmp = "<div onclick='writeProveedor(this)'>";
                 item_tmp +=
@@ -401,6 +434,15 @@
     )[0].innerHTML;
     document.getElementById("proveedor-results").style.border = "0px";
     document.getElementById("proveedor-results").innerHTML = "";
+  }
+
+  function newProvider(){
+    $('#provider-select').select2('close');   
+    $('#providerModal').modal('show');
+  }
+
+  function newProduct(element,value){
+    $('#ProductModal').modal('show');
   }
 </script>
 {% endblock %}
