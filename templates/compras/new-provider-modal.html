@@ -19,7 +19,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="POST" action="{% url 'compras:new_provider' %}">
+      <form method="POST" action="{% url 'compras:new_provider' %}" id="new-provider-form">
         <div class="modal-body">
           {% csrf_token %}
           <div class="form-group">
@@ -70,7 +70,7 @@
           <button type="button" class="btn btn-secondary" data-dismiss="modal">
             Close
           </button>
-          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button id="new-provider-modal-button" type="submit" class="btn btn-primary">Guardar</button>
         </div>
       </form>
     </div>

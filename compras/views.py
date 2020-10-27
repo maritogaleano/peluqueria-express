@@ -1,4 +1,4 @@
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, View, FormView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, View, FormView,DetailView
 from .business_logic.boleta import saveBoletaFromRequest
 from .models import Almacen, Proveedor, BoletaCompra
 from django.shortcuts import render, redirect
@@ -38,6 +38,10 @@ class NuevaBoleta(CreateView):
 def boletas(request):
     return render(request, 'compras/boletas.html')
 
+class BoletaDetail(DetailView):
+    model = BoletaCompra
+    template_name = 'compras/detail-boleta.html'
+    context_object_name = 'boleta'
 
 def boletas_json(request):
     boletas = list(BoletaCompra.objects.values(
@@ -55,10 +59,12 @@ def new_provider(request):
     print(request.POST)
     try:
         pro = ProveedorForm(request.POST)
-        pro.save()
+        pro = pro.save()
         sweetify.success(request, 'Proovedor Guardado Correctamente')
     except Exception as e:
         sweetify.error(request, str(e))
+    if 'origin' in request.POST:
+        return JsonResponse({'id':pro.pk},safe=False)
     return redirect('compras:proveedores')
 
 
@@ -70,7 +76,6 @@ class ProveedorUpdate(sweetify.views.SweetifySuccessMixin, UpdateView):
     success_message = 'Actualizado correctamente'
 
     def post(self,*args,**kwargs):
-        print(self.request.POST)
         super().post(*args, **kwargs)
 
 
@@ -110,10 +115,12 @@ def BuscarAlmacen(request):
 def new_product(request):
     try:
         form = ProductForm(request.POST)
-        form.save()
+        product = form.save()
         sweetify.success(request, 'Almacen Guardado Correctamente')
     except Exception as e:
         sweetify.error(request, str(e))
+    if 'origin' in request.POST:
+        return JsonResponse({'id':product.pk},safe=False)
     return redirect('compras:almacenes')
 
 

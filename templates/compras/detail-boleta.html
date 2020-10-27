@@ -129,7 +129,7 @@
           <div class="row" name="productos-data">
             <div class="col-12 col-lg-3">
               <input type="hidden" name="almacen-id" value="" />
-              nombre:<input
+                nombre:<input
                 type="text"
                 name="nombre"
                 class="form-control"
@@ -216,7 +216,7 @@
       </div>
     </form>
   </div>
-  {% include "compras/new-provider-modal.html" %} 
+  {% include "compras/new-provider-modal.html" %}
   {% include "compras/new-product-modal.html" %}
 </div>
 <script>
@@ -303,11 +303,7 @@
       div.style.border = "1px solid #000";
       dataJson = JSON.parse(data);
       div.innerHTML +=
-        "<div onclick=\"newProduct(this,'" +
-        element.value +
-        "')\" style='color:#0056b3' >Agregar Almacen " +
-        element.value +
-        "...</div>";
+        '<div onclick="newProduct(this,\''+element.value+'\')">Agregar Almacen '+element.value+'...</div>';
       for (var x = 0; x < dataJson.length; x++) {
         var item_tmp = "<div onclick='writeSelect(this)'>";
         item_tmp +=
@@ -317,6 +313,10 @@
         div.innerHTML += item_tmp;
       }
     }
+  }
+
+  function valePorUnaFuncion() {
+    console.log("xD");
   }
 
   function writeSelect(element) {
@@ -368,7 +368,7 @@
           console.log(x.response);
           console.log(typeof x.response);
           dataJson = JSON.parse(x.response);
-          if (dataJson["status"] == "success") {
+          if ((dataJson["status"] == "success")) {
             Swal.fire(
               "Boleta Registrada Correctamente",
               "Pulsa el boton para refrescar",
@@ -403,6 +403,8 @@
             if (q != "") {
               div.style.border = "1px solid #000";
               dataJson = JSON.parse(data);
+              div.innerHTML +=
+                '<div onclick="newProvider()">Agregar Proveedor...</div>';
               for (var y = 0; y < dataJson.length; y++) {
                 var item_tmp = "<div onclick='writeProveedor(this)'>";
                 item_tmp +=
@@ -413,8 +415,6 @@
                 item_tmp += "</div>";
                 div.innerHTML += item_tmp;
               }
-              div.innerHTML +=
-                '<div onclick="newProvider()">Agregar Proveedor...</div>';
             }
           });
         } else {
@@ -432,101 +432,18 @@
     document.getElementById("q-proveedor").value = element.getElementsByTagName(
       "p"
     )[0].innerHTML;
-    wipeProviderDiv();
-  }
-
-  function wipeProviderDiv(){
     document.getElementById("proveedor-results").style.border = "0px";
     document.getElementById("proveedor-results").innerHTML = "";
   }
 
-  function newProvider() {
-    $("#provider-select").select2("close");
-    $("#providerModal").modal("show");
+  function newProvider(){
+    $('#provider-select').select2('close');   
+    $('#providerModal').modal('show');
   }
 
-  var product_element = null;
-  function newProduct(element, value) {
-    $("#ProductModal").modal("show");
-    document.getElementById("id_nombre").value=value;
-    document.getElementById("id_cantidad").value=0;
-    product_element = element;
-    console.log(product_element);
+  function newProduct(element,value){
+    $('#ProductModal').modal('show');
   }
 
-  function newProductModal(element) {
-    let form_data = new FormData(document.getElementById("new-product-form"));
-    form_data.append("origin", "ajax");
-    let product_ajax = new XMLHttpRequest();
-    product_ajax.open("POST", "{% url 'compras:new_product' %}", true);
-    product_ajax.send(form_data);
-    product_ajax.onreadystatechange = function (e) {
-      if (product_ajax.readyState == 4) {
-        if (product_ajax.status === 200) {
-          product_ajax.addEventListener("load", function (e) {
-            let data = JSON.parse(product_ajax.responseText);
-            let inputs = product_element.parentElement.parentElement.parentElement.getElementsByTagName("input");
-            inputs[0].value = data["id"];
-            inputs[1].value = form_data.get("nombre");
-            product_element.parentElement.style.border = "0px solid #fff";
-            product_element.parentElement.innerHTML = "";
-            product_element = null;
-            Swal.fire(
-              "",
-              "El producto se guardo correctamente",
-              "success"
-            );
-            $("#ProductModal").modal("hide");
-          });
-        } else {
-          Swal.fire("", "Algo salio mal :(", "Error");
-        }
-      }
-    };
-  }
-  function newProviderModal(element) {
-    let form_data = new FormData(document.getElementById("new-provider-form"));
-    form_data.append("origin", "ajax");
-    let provider_ajax = new XMLHttpRequest();
-    provider_ajax.open("POST", "{% url 'compras:new_provider' %}", true);
-    provider_ajax.send(form_data);
-    provider_ajax.onreadystatechange = function (e) {
-      if (provider_ajax.readyState == 4) {
-        if (provider_ajax.status === 200) {
-          provider_ajax.addEventListener("load", function (e) {
-            let data = JSON.parse(provider_ajax.responseText);
-            var newOption = new Option(form_data.get("nombre")+":"+form_data.get("ruc"), data["id"], true, true);
-            // Append it to the select
-            $('#provider-select').append(newOption).trigger('change');
-            Swal.fire(
-              "",
-              "El registro se guardo correctamente",
-              "success"
-            );
-            $("#providerModal").modal("hide");
-          });
-        } else {
-          Swal.fire("", "Algo salio mal :(", "Error");
-        }
-      }
-    };
-    // console.log(FD);
-    // for (var p of FD) {
-    //   console.log(p);
-    // }
-  }
-  //overwrite modals buttons behavior
-  document
-    .getElementById("new-product-modal-button")
-    .setAttribute("type", "button");
-  document
-    .getElementById("new-product-modal-button")
-    .setAttribute("onclick", "newProductModal(this)");
-  document
-    .getElementById("new-provider-modal-button")
-    .setAttribute("type", "button");
-  document
-    .getElementById("new-provider-modal-button")
-    .setAttribute("onclick", "newProviderModal(this)");
 </script>
 {% endblock %}
